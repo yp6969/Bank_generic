@@ -25,8 +25,8 @@ typedef struct {
     char *firstNameOfClient;
     char *lastNameOfClient;
     char *nameOfBank;
-    int Id;
-    int Id;
+    int clientId;
+    int branchId;
     int accountNumber;
     double authorizedException;
     double acountBalance;
@@ -40,7 +40,7 @@ typedef struct {
 typedef struct Branch_t{
     char* nameOfBank;
     char* branchName;
-    int Id;
+    int branchId;
     int numberOfBranchClients;
     double sumOfAllBranchClients;
     double branchProfitOfLastYear;

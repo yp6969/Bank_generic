@@ -4,45 +4,31 @@
 /******************************************************/
 /*  *********    adding client tree     ***************/
 
-void addClientToBranch_t(Branch* branch){
-    Client* tempClient  = createNewClient(branch->branchId);
+/*creating the branch list*/
+void create_Branch_Client_Tree(Tree* clientHead){
+    create_tree(clientHead);
+    return;
+}
+
+void add_Client_To_Branch_t(Branch* branch){
+    Client* tempClient  = create_new_client(branch->branchId);
     branch->clientHead = addNewClientToBranch(branch->clientHead , *tempClient );
     updateNewClientToBranch( branch  , *tempClient );
     FREE(tempClient);
 }
 
-/*creating the branch list*/
-void createBranchClientTree(Client_tree* clientHead){
-    clientHead = NULL;
-    return;
-}
 
-Client* createNewClient( int branchId ){
+Client* create_New_Client( int branchId ){
     Client* newClient = ALLOC (Client , 1 );
     newClient->acountBalance = 0;
     updateClientParameters( &newClient , branchId );
     return newClient;
-} 
+}
 
 /*adding new branch to the branch tree*/
-Client_tree * addNewClientToBranch(Client_tree * clientHead , Client client  ) {
-    if (!clientHead) {
-        Client_tree *newClientNode = ALLOC( Client_tree , 1 );    
-        newClientNode->client = client;
-        newClientNode->left = newClientNode->right = NULL;
-        return newClientNode;
-    }
-    /*if the branch id is alredy exsist do not add nothing and return the current tree */
-    if (client.clientId == clientHead->client.clientId){
-        printf("\n\tThis client is already exsist try again/t/n");
-        return clientHead;
-    }
-    else if (client.clientId > clientHead->client.clientId) {
-        clientHead->right = addNewClientToBranch(clientHead->right, client); 
-    } else if ( client.clientId < clientHead->client.clientId ) {
-        clientHead->left = addNewClientToBranch(clientHead->left, client);
-    } 
-    return clientHead;
+Tree * add_New_Client_To_Branch(Tree * clientHead , Client client )
+{
+
 }
 
 /********************************************************************/
@@ -155,83 +141,19 @@ void addNode(D_Llinked_List* list , Client* newClient ){
 /******              delete clients                ******/
 
 /*  delete all the branch clients*/
-Client_tree* deleteAllBranchClients(Client_tree* clientHead ){
-    Client_tree* tempClient;
-    if(!clientHead) return NULL;
-    tempClient = deleteAllBranchClients(clientHead->left);
-    tempClient = deleteAllBranchClients(clientHead->right);
-    freeClient(clientHead);
-    return NULL;
+Tree* deleteAllBranchClients(Tree* clientHead  )
+{
+    return remove_All_nodes(clientHead , &freeClient );
 }
 
-/*  delete specific client by id*/
-Client_tree* deleteClient(Client_tree* clientHead , int clientId ){
-    Client_tree *clientNode , *clientNode_2 , *parent;
-    Client tempClient;
-    parent = NULL;
-    clientNode = findDeleteClient( clientHead , clientId , &parent);
-    if(!clientNode) return clientHead;
-    if(IS_LEAF(clientNode)){
-        if(parent){
-            if(parent->left = clientNode) parent->left = NULL;
-            else parent->right = NULL;
-            freeClient(clientNode); 
-        }
-        else {
-            freeClient(clientNode);
-            return NULL;
-        }
-    }
-    else{
-        if(clientNode->left){
-            clientNode_2 = find_max_client(clientNode->left);
-            SWAP(clientNode->client , clientNode_2->client , tempClient );
-            clientNode->left = deleteClient(clientNode->left , clientId );
-        }
-        else{
-            clientNode_2 = find_min_client(clientNode->right);
-            SWAP(clientNode->client , clientNode_2->client , tempClient );
-            clientNode->right = deleteClient(clientNode->right , clientId );
-        }
-    }
-    return clientHead;
+/* delete specific client */
+Tree* deleteClient( Tree* clientHead , Client* client )
+{
+    return delete_node_tree( clientHead , client , &cmp_clients_id , &freeClient);
 }
-
-/* finds the wanted client for deletion*/
-Client_tree* findDeleteClient(Client_tree* clientNode , int clientId , Client_tree** parent){
-    if(!clientNode) return NULL;
-    if(clientNode->client.clientId == clientId){
-        return clientNode;
-    }
-    if(clientNode->client.clientId > clientId){
-        if(parent) *parent = clientNode;
-        return findDeleteClient(clientNode->left , clientId , parent);
-    }
-    if(parent) *parent = clientNode;
-    return findDeleteClient(clientNode->right , clientId , parent);
-}
-
-/*  finds the bigest client ID in the tree*/
-Client_tree* find_max_client(Client_tree* clientNode){
-    if(!clientNode) return NULL;
-    if(clientNode->right){
-        return find_max_client(clientNode->right);
-    }
-    return clientNode;
-}
-
-/*  finds the lowest client ID in the tree*/
-Client_tree* find_min_client(Client_tree* clientNode){
-    if(!clientNode) return NULL;
-    if(clientNode->left){
-        return find_max_client(clientNode->left);
-    }
-    return clientNode;
-}
-
 
 /* free all the allocated blockes in the client*/
-void freeClient(Client_tree* clientNode){
+void freeClient(Tree* clientNode){
     updateDeleteClient(clientNode->client);
     FREE(clientNode->client.nameOfBank);
     FREE(clientNode->client.firstNameOfClient);
@@ -239,6 +161,21 @@ void freeClient(Client_tree* clientNode){
     FREE(clientNode);
     return;
 }
+
+////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////
+
+/* compare client by id */
+int cmp_clients_id(Client* c1 , Client* c2)
+{
+    if(c1->clientId > c2->clientId) return 1
+    if(c1->clientId < c2->clientId) return -1
+    return 0;
+}
+
+
+/////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
 
 
 /****************************************************************/
@@ -279,7 +216,7 @@ void updateClientParameters(Client** client , int banchId){
 }
 
 void updateDeleteClient(Client client ){
-    Branch* branch = searchBranchById(branchHead , client.branchId );
+    Branch* branch = searchBranchById(bank.branchHead , client.branchId );
     updateNumberOfBankClients( &bank.numberOfBankClients , DELETE , NON );
     updateSumOfAllBankClients(&bank.sumOfAllBankClients , -(client.acountBalance - client.loanBalance) , NON );
     /* branch updates */
@@ -335,7 +272,7 @@ void loanToClient(Client* client , Branch* branch){
 
 /*repay client loans*/
 void repayClientLoans(Client* client , Branch* branch ){
-    
+
     double deposit;
     
     if(client->loanBalance >= 0 ){
@@ -354,7 +291,8 @@ void repayClientLoans(Client* client , Branch* branch ){
 }
 
 /*  checking the loane request for client */
-int chekLoanRequest(double authorizedException , double deposite , double loanBalance){
+int chekLoanRequest(double authorizedException , double deposite , double loanBalance)
+{
     if( (loanBalance + deposite) > authorizedException ) return FAILD;
     return SUCCESS;
 }
@@ -372,7 +310,8 @@ void printClientDetails(Client* client){
     return;
 }
 
-void printClientId(Client_tree* clientHead ){
+
+void printClientId(Tree* clientHead ){
     if(!clientHead) return;
     printClientId(clientHead->left);
     printf("Client ID : [%d]\n" , clientHead->client.clientId);
