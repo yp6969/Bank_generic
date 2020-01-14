@@ -104,7 +104,7 @@ void bankMenegerOption(){
                 else{
                     printf("Choose one of the following\n");
                     printBranchsId(branchHead);
-                    branchHead = deleteBranch( branchHead , getBranchId() );
+                    branchHead = deleteBranch( branchHead , getBranchId() );///////////
                     continue;
                 }
             case 8:

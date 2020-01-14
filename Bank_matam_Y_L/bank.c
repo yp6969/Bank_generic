@@ -65,3 +65,8 @@ double averageNumberOfAccountsInBranches(Branch_tree* branchHead , int* cnt_clie
     return ( averageLeft * numOfBranchLeft + averageRight * numOfBranchRight + branchHead -> branch.numberOfBranchClients ) / *cnt_clients;
 
 }
+
+
+averegeClient(Tree* clientHead , ){
+    return averege ( ,&getclientkey )
+}

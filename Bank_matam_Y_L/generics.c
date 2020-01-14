@@ -5,8 +5,12 @@ void create_tree( Tree* head ){
     head = NULL;
 }
 
+void* add_new_node(){
+    
+}
+
 /*  adding node */
-Tree * add_new_node( Tree* head ,  void* key ) {
+Tree * add_new_node( Tree* head ,  void* key , int (*cmp)(void* , void*)) {
     if (!head) {
         Tree *newNode = ALLOC( Tree , 1 );    
         newNode->key = key;
@@ -14,21 +18,25 @@ Tree * add_new_node( Tree* head ,  void* key ) {
         return newNode;
     }
     /*if the branch id is alredy exsist do not add nothing and return the current tree */
-    if (key.Id == head->key->Id){
+    if ((*cmp)(key , head->key) == 0 ){
         printf("\n\tThis is already exsist try again/t/n");
         return head;
     }
-    else if (key->Id > head->key->Id) {
-        head->right = add_new_node(head->right , key); 
-    } else if ( key->Id < head->key->Id ) {
+    else if ( (*cmp)(key , head->key) == 1 ) {
+        head->right = add_new_node(head->right , key);
+    } else if ( (*cmp)(key , head->key) == -1 ) {
         head->left = add_new_node( head->left , key);
     }
     return head;
 }
+///////////////////////////////
+/////////////////////////////
+////////////////////////////
+/////////////////////////
 
-
+/*******************************************************/
 /* deleting all the wanted nodes in the bank/branch  */
-Tree* remove_All_nodes(Tree* node){
+Tree* remove_All_nodes(Tree* node , void (*free_t)(Tree*) ){
     Tree* temp;
     if(!node) return NULL;
     temp = remove_All_nodes(node->left);
@@ -38,30 +46,12 @@ Tree* remove_All_nodes(Tree* node){
 }
 
 
-
-
-void tree_to_array( D_Llinked_List* list, Tree* treeHead ){
-    Node* head = list->head;
-    if(treeHead == NULL ) return;
-    tree_to_array( list , treeHead->left );
-    Node* node = ALLOC( Node , 1 );
-    node->next = head;
-    head->prev = node;
-    node->key = treeHead->key;
-    list->head = node;
-    tree_to_array( list , treeHead->right );
-
-}
-
-
-
-
-/* delete spesific branch by id*/
-Tree* delete_node_tree(Tree* t , int id ){
+/* delete spesific element in the tree */
+Tree* delete_node_tree(Tree* t , void* element , int (*cmp)(void* , void*) , void (*free_t)(Tree*)){
     Tree *node , *node_2 , *parent;
     void* tempNode;
     parent = NULL;
-    node = find_delete_node( t , id , &parent);/* searching */
+    node = find_delete_node( t , element , &parent , cmp );/* searching */
     if(!node){
         printf("Branch not found\n");
         return t;
@@ -70,57 +60,71 @@ Tree* delete_node_tree(Tree* t , int id ){
         if(parent){
             if(parent->left == node) parent->left = NULL;
             else parent->right = NULL;
-            free_t(node);/* free the deleted space */
+            (*free_t)(node);/* free the deleted space */
             return t;
         }
         else{
-            free_t(node);
+            (*free_t)(node);
             return NULL;
         }
     }
     else{
         if(node->left){
-            node_2 = find_Max_Branch(node->left);
+            node_2 = find_max(node->left);
             SWAP(node->key , node_2->key , tempNode);
-            node->left = delete_node_tree(node->left , id );
+            node->left = delete_node_tree(node->left , element , cmp);
         }
         else{
-            node_2 = find_Min_Branch(node->right);
+            node_2 = find_min(node->right);
             SWAP(node->key , node_2->key , tempNode );
-            node->right = delete_node_tree(node->right , id );
+            node->right = delete_node_tree(node->right , element , cmp );
         }
     }
     return t;
 }
 
-
-Tree* findDeleteClient(Tree* clientNode , int clientId , Tree** parent){
-    if(!clientNode) return NULL;
-    if(clientNode->client.clientId == clientId){
-        return clientNode;
+/*** find the wanted node tree to delete ***/
+/* using the compare function (generic) */
+Tree* find_delete_node(Tree* t , void* key , Tree** parent , int (*cmp)(void* , void*) ){
+    if(!t) return NULL;
+    if((*cmp)(t->key , key ) == 0 ){
+        return t;
     }
-    if(clientNode->client.clientId > clientId){
-        if(parent) *parent = clientNode;
-        return findDeleteClient(clientNode->left , clientId , parent);
+    if( (*cmp)(t->key , key ) == 1 ){
+        if(parent) *parent = t;
+        return find_delete_node(t->left , key , parent);
     }
-    if(parent) *parent = clientNode;
-    return findDeleteClient(clientNode->right , clientId , parent);
+    if(parent) *parent = t;
+    return find_delete_node(t->right , key , parent);
 }
 
-/*  finds the bigest client ID in the tree*/
-Tree* find_max_client(Tree* clientNode){
-    if(!clientNode) return NULL;
-    if(clientNode->right){
-        return find_max_client(clientNode->right);
+/*  finds the bigest ID in the tree*/
+Tree* find_max(Tree* node){
+    if(!node) return NULL;
+    if(node->right){
+        return find_min(node->right);
     }
-    return clientNode;
+    return node;
 }
 
-/*  finds the lowest client ID in the tree*/
-Tree* find_min_client(Tree* clientNode){
-    if(!clientNode) return NULL;
-    if(clientNode->left){
-        return find_max_client(clientNode->left);
+/*  finds the lowest ID in the tree*/
+Tree* find_min(Tree* node){
+    if(!node) return NULL;
+    if(node->left){
+        return find_max(node->left);
     }
-    return clientNode;
+    return node;
+}
+
+
+
+///////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+void tree_to_array( Tree array[] , Tree* treeHead ){
+    if(!treeHead) return;
+    tree_to_array( array , treeHead->left );
+    array[i] = treeHead;
+    tree_to_array( array , treeHead->right );
 }

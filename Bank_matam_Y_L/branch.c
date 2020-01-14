@@ -5,8 +5,8 @@
 /*****               adding branch Tree             ******/
 
 /*creating the branch list*/
-void createBranchTree(){
-    branchHead = NULL;
+void createBranchTree(Tree* branchHead){
+    create_tree(branchHead);
     return;
 }
 
@@ -61,91 +61,41 @@ int isBranchFull(int numberOfBranchClients){
 /**********************************************************/
 /*******             delete branches               ********/
 
-/* deleting all the branchs in the bank*/
-Branch_tree* deleteAllBranchs(Branch_tree* branchTree){
-    Branch_tree* temp;
-    if(!branchTree) return NULL;
-    temp = deleteAllBranchs(branchTree->left);
-    temp = deleteAllBranchs(branchTree->right);
-    freeBranch(branchTree);
-    return temp;
+Tree* deleteAllBranchs(Tree* branchTree )
+{
+    return remove_All_nodes(branchTree , &free_Branch );
 }
 
 /* delete spesific branch by id*/
-Branch_tree* deleteBranch(Branch_tree* branchTree , int branchId ){
-    Branch_tree *branchNode , *branchNode_2 , *parent;
-    Branch tempBranch;
-    parent = NULL;
-    branchNode = findDeletedBranch(branchTree , branchId , &parent);
-    if(!branchNode){
-        printf("Branch not found\n");
-        return branchTree;
-    }
-    if(IS_LEAF(branchNode)){
-        if(parent){
-            if(parent->left == branchNode) parent->left = NULL;
-            else parent->right = NULL;
-            freeBranch(branchNode);
-            return branchTree;
-        }
-        else{
-            freeBranch(branchNode);
-            return NULL;
-        }
-    }
-    else{
-        if(branchNode->left){
-            branchNode_2 = find_Max_Branch(branchNode->left);
-            SWAP(branchNode->branch , branchNode_2->branch , tempBranch);
-            branchNode->left = deleteBranch(branchNode->left , branchId );
-        }
-        else{
-            branchNode_2 = find_Min_Branch(branchNode->right);
-            SWAP(branchNode->branch , branchNode_2->branch , tempBranch );
-            branchNode->right = deleteBranch(branchNode->right , branchId );
-        }
-    }
-    return branchTree;
-}
-
-/* finds the branch the wanted to delete */
-Branch_tree* findDeletedBranch(Branch_tree* branchTree , int branchId , Branch_tree** parent){
-    if(!branchTree) return NULL;
-    if(branchTree->branch.branchId == branchId){
-        return branchTree;
-    }
-    if(branchTree->branch.branchId > branchId){
-        if(parent) *parent = branchTree;
-        return findDeletedBranch(branchTree->left , branchId , parent);
-    }
-    if(parent) *parent = branchTree;
-    return findDeletedBranch(branchTree->right , branchId , parent);
-}
-
-/* fides the maximum id in the branch tree */
-Branch_tree* find_Max_Branch(Branch_tree *branchNode){
-    if(!branchNode)return NULL;
-    if(branchNode->right)
-        return find_Max_Branch(branchNode->right);
-    return branchNode;
-}
-
-/* findes the minimum id in the branch tree */
-Branch_tree* find_Min_Branch(Branch_tree *branchNode){
-    if(!branchNode)return NULL;
-    if(branchNode->left)
-        return find_Min_Branch(branchNode->left);
-    return branchNode;
+Tree* deleteBranch( Tree* branchTree , Branch* branch )
+{
+    return delete_node_tree( branchTree , branch , &cmp_branchs_id , &free_Branch);
 }
 
 /* free all the allocated blockes*/
-void freeBranch(Branch_tree *branchTree){
+void free_Branch(Tree *branchTree){
     updateNumberOfBranch(&bank.numberOfBranch , DELETE , NON);
     branchTree->branch.clientHead = deleteAllBranchClients(branchTree->branch.clientHead);
     FREE(branchTree->branch.nameOfBank);
     FREE(branchTree->branch.branchName);
     FREE(branchTree);
 }
+
+
+
+///////////////////////////////////////////////////////
+///////////////////////////////////////////////////
+int cmp_branchs_id(Branch* b1 , Branch* b2)
+{
+    if(b1->branchId > b2->branchId) return 1
+    if(b1->branchId < b2->branchId) return -1
+    return 0;
+}
+
+///////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+
+
 
 /*************************************************/
 /*  *********     branch data     ***************/
