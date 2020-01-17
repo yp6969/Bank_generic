@@ -1,7 +1,6 @@
 #include "generics.h"
 
 
-
 /***********************************************************************************/
 /*****                           ADD FUNCTIONS                              *****/
 
@@ -172,6 +171,7 @@ void tree_to_array(D_Llinked_List* list , Tree* treeHead , int (*cmp)(void* , vo
 }
 
 
+
 /*******************************************************************************/
 /*******                       add node to list                        *******/
 
@@ -201,12 +201,10 @@ void add_Node_to_list(D_Llinked_List* list , void* key , int (*cmp)(void*, void*
     }
 }
 
-
-
 /***********************************************************************************/
 /*****                           Avereg FUNCTION                              *****/
 
-double avarageKey(Node* t , int* numOfNodes , double (*getKey)(void*)){
+double avarage_Key(Node* t , int* numOfNodes , double (*getKey)(void*)){
     
     int num_l , num_r;
     double avg_l , avg_r;
@@ -216,8 +214,8 @@ double avarageKey(Node* t , int* numOfNodes , double (*getKey)(void*)){
         return 0;
     }
     
-    avg_l = avarageKey( t -> left , &num_l , getKey);
-    avg_r = avarageKey( t -> right , &num_r  , getKey);
+    avg_l = avarage_Key( t -> left , &num_l , getKey);
+    avg_r = avarage_Key( t -> right , &num_r  , getKey);
     
     *numOfNodes = num_l + num_r + 1;
     return ( (avg_l * num_l) + (avg_r * num_r) + getKey(t->key) ) / *numOfNodes;
