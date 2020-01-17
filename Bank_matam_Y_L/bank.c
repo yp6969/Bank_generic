@@ -48,25 +48,17 @@ int isBankFull(){
 }
 
 
-/* return the averge of number of clients in branch */
-double averageNumberOfAccountsInBranches(Branch_tree* branchHead , int* cnt_clients) {
-    int numOfBranchLeft , numOfBranchRight;
-    double averageLeft , averageRight;
-    if( !branchHead ) {
-        *cnt_clients = 0;
-        return 0;
-    }
-    /* ask for the averege of the left right childs */
-    averageLeft = averageNumberOfAccountsInBranches( branchHead -> left , &numOfBranchLeft );
-    averageRight = averageNumberOfAccountsInBranches( branchHead -> right , &numOfBranchRight );
-    /* update the number of clients */
-    *cnt_clients = numOfBranchLeft + numOfBranchRight + 1;
-    /* mathematical expretion of avereg */
-    return ( averageLeft * numOfBranchLeft + averageRight * numOfBranchRight + branchHead -> branch.numberOfBranchClients ) / *cnt_clients;
+/********************************************************************/
+/*******                   averege branches                 ********/
 
+/*avg num of client*/
+/* return the averge of number of clients in branch */
+double average_Number_Of_Accounts_In_Branches(Tree* branchTree){
+    int num;
+    return avarageKey(branchTree , &num , &get_num_of_client);
 }
 
 
-averegeClient(Tree* clientHead , ){
-    return averege ( ,&getclientkey )
+double get_num_of_client(Branch* b){
+    return b->numberOfBranchClients;
 }

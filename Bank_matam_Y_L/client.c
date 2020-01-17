@@ -244,11 +244,33 @@ int chekLoanRequest(double authorizedException , double deposite , double loanBa
 
 
 
-/****************************************************************/
-/*                   print client ditails                      */
+/***************************************************************************/
+/*******                      print client                         *********/
+
+void print_all_Client_Details(Tree* clientTree)
+{
+    print_keys(clientTree , &print_Client_Details);
+}
+
+void print_all_Client_Id(Tree* clientTree)
+{
+    print_keys(clientTree , &print_Client_Id);
+    return;
+}
+
+void printClientAcountNumberAndBalance(Tree* clientTree){
+    print_keys(clientTree , &print_Client_account_number_balance);
+    return;
+}
+
+
+
+
+/**********************************************/
+/*           print client pointers            */
 
 /*Print the parameters of the client*/
-void printClientDetails(Client* client){
+void print_Client_Details(Client* client){
     printf("\nname Of Client: %s %s\n", client -> firstNameOfClient , client -> lastNameOfClient );
     printf("client Id: %d \n" ,(int)client -> clientId );
     printf("branch Id: %d \n" , client -> branchId);
@@ -260,11 +282,12 @@ void printClientDetails(Client* client){
     return;
 }
 
+void print_Client_Id(Client* c {
+    printf("Client [%d]\n" , c->clientId);
+}
 
-void printClientId(Tree* clientHead ){
-    if(!clientHead) return;
-    printClientId(clientHead->left);
-    printf("Client ID : [%d]\n" , clientHead->client.clientId);
-    printClientId(clientHead->right);
-    return;
+
+void print_Client_account_number_balance(Client* c {
+    printf("\nClient account: %d \t Balance: %g \n", client->accountNumber , client->acountBalance );
+    
 }

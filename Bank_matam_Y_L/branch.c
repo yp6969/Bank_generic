@@ -159,18 +159,9 @@ void printBranchDetails(Branch* branch){
     return;
 }
 
-void printClientAcountNumberAndBalance(Tree* clientHead){
-    if(!clientHead) return;
-    printClientAcountNumberAndBalance(clientHead->left);
-    printf("\nClient account: %d \t Balance: %g \n", clientHead->client.accountNumber , clientHead->client.acountBalance );
-    printClientAcountNumberAndBalance(clientHead->right);
-    return;
-}
 
-/*prunt all the branchs ID */
-void printBranchsId(Tree* branchHead){
-    if(!branchHead) return ;
-    printBranchsId(branchHead->left);
-    printf("Branch [%d]\n" , branchHead->branch.branchId);
-    printBranchsId(branchHead->right);
+
+/*print all the branchs ID */
+void print_Branch_Id(Branch* b {
+    printf("Branch [%d]\n" , b->branchId);
 }
