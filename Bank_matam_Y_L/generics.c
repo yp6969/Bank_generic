@@ -150,7 +150,7 @@ void* sorted_find( Tree* head , void* key , int (*cmp)( void* , void* ))
     void* temp;
     if( !head) return NULL;
     if((*cmp)(head->key , key ) == 1){
-        temp = sorted_find(head->left , id , cmp );
+        temp = sorted_find(head->left , key , cmp );
     }
     else if((*cmp)(head->key , key ) == -1){
         temp = sorted_find(head->right , key , cmp );
@@ -203,7 +203,10 @@ void add_Node_to_list(D_Llinked_List* list , void* key , int (*cmp)(void*, void*
 }
 
 
-/*              avarage              */
+
+/***********************************************************************************/
+/*****                           Avereg FUNCTION                              *****/
+
 double avarageKey(Node* t , int* numOfNodes , double (*getKey)(void*)){
     
     int num_l , num_r;
@@ -218,23 +221,25 @@ double avarageKey(Node* t , int* numOfNodes , double (*getKey)(void*)){
     avg_r = avarageKey( t -> right , &num_r  , getKey);
     
     *numOfNodes = num_l + num_r + 1;
-    return ( (avg_l * num_l) + (avg_r * num_r) + getKey(t) ) / *numOfNodes;
+    return ( (avg_l * num_l) + (avg_r * num_r) + getKey(t->key) ) / *numOfNodes;
 }
 
 
 
-/*avg num of client*/
-double avg_num_of_client(Tree* clientTree){
-    int num;
-    return avarageKey(clientTree , &num , &get_num_of_client);
+/***********************************************************************************/
+/*****                           print FUNCTION                              *****/
+
+
+/*print all the keys */
+void print_keys(Tree* head , void (*print)(void*)){
+    if(!head) return ;
+    print_keys(head->left);
+    (*print)(head->key);
+    print_keys(head->right);
 }
 
 
 
-/*prunt all the branchs ID */
-void printBranchsId(Tree* branchHead){
-    if(!branchHead) return ;
-    printBranchsId(branchHead->left);
-    printf("Branch [%d]\n" , branchHead->branch.branchId);
-    printBranchsId(branchHead->right);
-}
+
+
+
