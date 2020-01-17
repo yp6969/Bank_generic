@@ -141,8 +141,8 @@ int cmp_clients_accountBalance(Client* c1 , Client* c2 )
     return 0;
 }
 
-/*************************************************/
-/*  *********     client data     ***************/
+/**********************************************************************************/
+/**********                      client data                         **************/
 
 /*updates all the client parameters.*/
 void updateClientParameters(Client** client , int banchId){
@@ -250,6 +250,7 @@ int chekLoanRequest(double authorizedException , double deposite , double loanBa
 void print_all_Client_Details(Tree* clientTree)
 {
     print_keys(clientTree , &print_Client_Details);
+    return;
 }
 
 void print_all_Client_Id(Tree* clientTree)
@@ -258,7 +259,7 @@ void print_all_Client_Id(Tree* clientTree)
     return;
 }
 
-void printClientAcountNumberAndBalance(Tree* clientTree){
+void print_all_Client_Acount_Number_And_Balance(Tree* clientTree){
     print_keys(clientTree , &print_Client_account_number_balance);
     return;
 }

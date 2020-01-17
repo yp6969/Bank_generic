@@ -143,12 +143,26 @@ int clientNumberWithBiggerLoansThenBalance( Tree *clientHead , int(*cmp)(void* ,
 }
 
 
+
 /****************************************************************/
 /*                   print branch ditails                       */
 
+void print_all_Branch_Details(Tree* branchTree)
+{
+    print_keys(branchTree , &print_Branch_Details);
+    return;
+}
 
+void print_all_Client_Id(Tree* branchTree)
+{
+    print_keys(branchTree , &print_Branch_Id);
+    return;
+}
+
+/**********************************************/
+/*           print client pointers            */
 /*print all the branch parameters*/
-void printBranchDetails(Branch* branch){
+void print_Branch_Details(Branch* branch){
     printf("\nBeanch ID: %d\n", branch -> branchId);
     printf("Number of branch clients: %d \n" ,branch -> numberOfBranchClients);
     printf("Sum of all branch clients: %g \n" ,branch -> sumOfAllBranchClients);
@@ -158,8 +172,6 @@ void printBranchDetails(Branch* branch){
     printf("Close hour: %d \n" , branch -> closeHour);
     return;
 }
-
-
 
 /*print all the branchs ID */
 void print_Branch_Id(Branch* b {

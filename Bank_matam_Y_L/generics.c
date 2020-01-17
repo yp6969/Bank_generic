@@ -35,6 +35,7 @@ Tree * add_new_node( Tree* head ,  void* key , int (*cmp)(void* , void*)) {
 /*****                           DELETE FUNCTION                              *****/
 
 /* deleting all the wanted nodes in the bank/branch  */
+/* used ass free list!!!!!!!!!!!!!!!!!  */
 Tree* remove_All_nodes(Tree* node , void (*free_t)(Tree*) ){
     Tree* temp;
     if(!node) return NULL;
@@ -160,9 +161,8 @@ void* sorted_find( Tree* head , void* key , int (*cmp)( void* , void* ))
     return temp;
 }
 
-///////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////
+/*******************************************************************************/
+/*******                          tree to list                           *******/
 
 void tree_to_array(D_Llinked_List* list , Tree* treeHead , int (*cmp)(void* , void*) ){
     if(!treeHead) return;
@@ -172,9 +172,8 @@ void tree_to_array(D_Llinked_List* list , Tree* treeHead , int (*cmp)(void* , vo
 }
 
 
-///////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////
+/*******************************************************************************/
+/*******                       add node to list                        *******/
 
 /* adding new client to Linked list and sort by ID */
 void add_Node_to_list(D_Llinked_List* list , void* key , int (*cmp)(void*, void*)){
@@ -237,9 +236,3 @@ void print_keys(Tree* head , void (*print)(void*)){
     (*print)(head->key);
     print_keys(head->right);
 }
-
-
-
-
-
-
