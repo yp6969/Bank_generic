@@ -5,13 +5,15 @@
 /*  *********    adding client tree     ***************/
 
 /*creating the branch list*/
-void create_Branch_Client_Tree(Tree* clientHead){
+void create_Branch_Client_Tree(Tree* clientHead)
+{
     create_tree(clientHead);
     return;
 }
 
 /* creating allocat client */
-Client* create_New_Client( int branchId ){
+Client* create_New_Client( int branchId )
+{
     Client* newClient = ALLOC (Client , 1 );
     //newClient->acountBalance = 0;
     updateClientParameters( &newClient , branchId );
@@ -65,7 +67,7 @@ void findClient(D_Llinked_List* list ){
 
 
 /* searching client by ID in the Bank !!!! */
- Client* search_Client_By_Id_In_Bank(Tree* branchHead ){
+Client* search_Client_By_Id_In_Bank(Tree* branchHead ){
     Client* client;
     if(!branchHead) return NULL;
     client = search_Client_By_Id_In_Bank( branchHead->left ;
@@ -113,7 +115,8 @@ Tree* delete_Client( Tree* clientHead , Client* client )
 }
 
 /* free all the allocated blockes in the client*/
-void free_Client(Tree* clientNode){
+void free_Client(Tree* clientNode)
+{
     update_Delete_Client(clientNode->client);
     FREE(clientNode->client->nameOfBank);
     FREE(clientNode->client->firstNameOfClient);
@@ -145,7 +148,8 @@ int cmp_clients_accountBalance(Client* c1 , Client* c2 )
 /**********                      client data                         **************/
 
 /*updates all the client parameters.*/
-void updateClientParameters(Client** client , int banchId){
+void updateClientParameters(Client** client , int banchId)
+{
     updateFirstNameOfClient( &(*client) -> firstNameOfClient);
     updateLastNameOfClient( &(*client) -> lastNameOfClient);
     updateNameOfBank( &(*client) -> nameOfBank , NON );
@@ -160,7 +164,8 @@ void updateClientParameters(Client** client , int banchId){
 }
 
 
-void update_Delete_Client(Client* client ){
+void update_Delete_Client(Client* client )
+{
     Branch* branch = searchBranchById(bank.branchHead , client->branchId );
     /* bank updates */
     updateNumberOfBankClients( &bank.numberOfBankClients , DELETE , NON );
@@ -172,7 +177,8 @@ void update_Delete_Client(Client* client ){
 }
 
 /*update the branch with the new client in the bank*/
-void update_New_Client_To_Branch( Branch *branch  , Client* tempClient ){
+void update_New_Client_To_Branch( Branch *branch  , Client* tempClient )
+{
     updateNumberOfBranchClients( &(branch->numberOfBranchClients) , ADD , NON );
     updateSumOfAllBranchClients( &(branch->sumOfAllBranchClients) , (tempClient->acountBalance) , NON);
     updateNumberOfBankClients( &(bank.numberOfBankClients) , ADD , NON );
@@ -182,7 +188,8 @@ void update_New_Client_To_Branch( Branch *branch  , Client* tempClient ){
 }
 
 /*deposit money to client account*/
-void depositeMoneyToClientAccount(Client* client){
+void depositeMoneyToClientAccount(Client* client)
+{
     double deposit;
     printf("\nHow much do you want to deposite ? :\n" );
     deposit = getDpositeMoney();
@@ -283,12 +290,12 @@ void print_Client_Details(Client* client){
     return;
 }
 
-void print_Client_Id(Client* c {
+void print_Client_Id(Client* c ){
     printf("Client [%d]\n" , c->clientId);
 }
 
 
-void print_Client_account_number_balance(Client* c {
+void print_Client_account_number_balance(Client* c ){
     printf("\nClient account: %d \t Balance: %g \n", client->accountNumber , client->acountBalance );
     
 }

@@ -107,6 +107,9 @@ void updateBranchParameters(Branch* branch){
     return;
 }
 
+double get_num_of_client(Branch* b){
+    return b->numberOfBranchClients;
+}
 
 /*calculate the branch profit of the last year*/
 double calculateBranchProfitOfLastYear(Branch* branch){
