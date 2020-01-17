@@ -5,55 +5,38 @@
 /*****               adding branch Tree             ******/
 
 /*creating the branch list*/
-void createBranchTree(Tree* branchHead){
+void create_Branch_Tree(Tree* branchHead)
+{
     create_tree(branchHead);
     return;
 }
 
-/* hande several function to create properly */
-void addNewBranch_t(){
-    Branch* tmpBranch  = createNewBranch();
-    bank.branchHead = addNewBranchToTree( bank.branchHead , *tmpBranch );
-    updateNumberOfBranch( &(bank.numberOfBranch) , ADD , NON );
+/*adding new branch to the branch tree*/
+void add_New_Branch_t()
+{
+    Branch *tmpBranch = create_New_Branch();
+    branch-> clientHead = add_new_node(branch->clientHead , tmpBranch , &cmp_branchs_id );
+    update_Number_Of_Branch( &(bank.numberOfBranch) , ADD , NON );
     printf("\nBranch number %d is created\n\n", tmpBranch->branchId);
-    FREE(tmpBranch);
 }
 
 /* creat new branch */
-Branch* createNewBranch(){
+Branch* create_New_Branch()
+{
     Branch* newBranch = ALLOC (Branch,1);
-    updateBranchParameters( newBranch );
+    update_Branch_Parameters( newBranch );
     return newBranch;
 }
 
-/*adding new branch to the branch tree*/
-Branch_tree * addNewBranchToTree(Branch_tree* branchHead ,  Branch branch  ) {
-    if (!branchHead) {
-        Branch_tree *newBranchNode = ALLOC( Branch_tree , 1 );    
-        newBranchNode->branch = branch;
-        newBranchNode->left = newBranchNode->right = NULL;
-        return newBranchNode;
-    }
-    /*if the branch id is alredy exsist do not add nothing and return the current tree */
-    if (branch.branchId == branchHead->branch.branchId){
-        printf("\n\tThis branch is already exsist try again/t/n");
-        return branchHead;
-    }
-    else if (branch.branchId > branchHead->branch.branchId) {
-        branchHead->right = addNewBranchToTree(branchHead->right , branch); 
-    } else if ( branch.branchId < branchHead->branch.branchId ) {
-        branchHead->left = addNewBranchToTree( branchHead->left , branch);
-    }
-    return branchHead;
-}
-
 /* check is the client list is empty*/
-int isBranchEmpty( Client_tree* clientHead ){
+int is_Branch_Empty( Tree* clientHead )
+{
     if(!clientHead) return TRUE;
     return FALSE;
 }
 /* check is the client list is full*/
-int isBranchFull(int numberOfBranchClients){
+int is_Branch_Full(int numberOfBranchClients)
+{
     if(numberOfBranchClients >= MAX_CLIENT_OF_BRANCH) return TRUE;
     return FALSE;
 }
@@ -61,30 +44,44 @@ int isBranchFull(int numberOfBranchClients){
 /**********************************************************/
 /*******             delete branches               ********/
 
-Tree* deleteAllBranchs(Tree* branchTree )
+
+Tree* delete_All_Branchs(Tree* branchTree )
 {
     return remove_All_nodes(branchTree , &free_Branch );
 }
 
 /* delete spesific branch by id*/
-Tree* deleteBranch( Tree* branchTree , Branch* branch )
+Tree* delete_Branch( Tree* branchTree , Branch* branch )
 {
     return delete_node_tree( branchTree , branch , &cmp_branchs_id , &free_Branch);
 }
 
 /* free all the allocated blockes*/
-void free_Branch(Tree *branchTree){
-    updateNumberOfBranch(&bank.numberOfBranch , DELETE , NON);
-    branchTree->branch.clientHead = deleteAllBranchClients(branchTree->branch.clientHead);
+void free_Branch(Tree *branchTree)
+{
+    update_Number_Of_Branch( &bank.numberOfBranch , DELETE , NON);
+    branchTree->branch->clientHead = delete_All_Branch_Clients(branchTree->branch.clientHead);
     FREE(branchTree->branch.nameOfBank);
     FREE(branchTree->branch.branchName);
     FREE(branchTree);
 }
 
 
+/****************************************************************/
+/*                         search branch                        */
 
-///////////////////////////////////////////////////////
-///////////////////////////////////////////////////
+Branch* search_Branch_By_Id( Tree* branchHead )
+{
+    Branch* tmp = ALLOC(Branch , 1);
+    tmp->clientId = getBranchId();
+    Branch* branch = (Branch*)sorted_find(branchHead , tmp , &cmp_branchs_id );
+    FREE(tmp);
+    return branch;
+}
+
+/****************************************************************/
+/*                         compare branch                        */
+
 int cmp_branchs_id(Branch* b1 , Branch* b2)
 {
     if(b1->branchId > b2->branchId) return 1
@@ -92,13 +89,8 @@ int cmp_branchs_id(Branch* b1 , Branch* b2)
     return 0;
 }
 
-///////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////
-
-
-
-/*************************************************/
-/*  *********     branch data     ***************/
+/********************************************************************/
+/*  *********            branch data                     ***********/
 
 /*updates all the branches parameters
 flag means NON for 1 delete for -1.*/
@@ -121,6 +113,39 @@ double calculateBranchProfitOfLastYear(Branch* branch){
     return NON;
 }
 
+/*recursive method to find number of appearance of client with account balance that bigger then given balance*/
+int clientNumberWithGivenBalance(Tree *clientHead , double Balance) {
+    int count = 0 ;
+    if(!clientHead) {
+        return 0;
+    }
+    count += clientNumberWithGivenBalance( clientHead->left , Balance );
+    if( clientHead -> client->acountBalance > Balance ) {
+        count++;
+    }
+    count += clientNumberWithGivenBalance( clientHead->right , Balance );
+    return count;
+}
+
+/*recursive method to find number of appearance of client with account balance that lower then given loan balance*/
+int clientNumberWithBiggerLoansThenBalance( Tree *clientHead , int(*cmp)(void* , void*)) {
+    int count = 0 ;
+    if(!clientHead) {
+        return 0;
+    }
+    count += clientNumberWithBiggerLoansThenBalance( clientHead -> left );
+    if(clientHead -> client->loanBalance > clientHead->client.acountBalance) {
+        count++;
+    }
+    count += clientNumberWithBiggerLoansThenBalance( clientHead -> right );
+    return count;
+
+}
+
+
+/****************************************************************/
+/*                   print branch ditails                       */
+
 
 /*print all the branch parameters*/
 void printBranchDetails(Branch* branch){
@@ -134,7 +159,7 @@ void printBranchDetails(Branch* branch){
     return;
 }
 
-void printClientAcountNumberAndBalance(Client_tree* clientHead){
+void printClientAcountNumberAndBalance(Tree* clientHead){
     if(!clientHead) return;
     printClientAcountNumberAndBalance(clientHead->left);
     printf("\nClient account: %d \t Balance: %g \n", clientHead->client.accountNumber , clientHead->client.acountBalance );
@@ -143,39 +168,9 @@ void printClientAcountNumberAndBalance(Client_tree* clientHead){
 }
 
 /*prunt all the branchs ID */
-void printBranchsId(Branch_tree* branchHead){
+void printBranchsId(Tree* branchHead){
     if(!branchHead) return ;
     printBranchsId(branchHead->left);
     printf("Branch [%d]\n" , branchHead->branch.branchId);
     printBranchsId(branchHead->right);
 }
-
-/*recursive method to find number of appearance of client with account balance that bigger then given balance*/
-int clientNumberWithGivenBalance(Client_tree *clientHead , double Balance) {
-    int count = 0 ;
-    if(!clientHead) {
-        return 0;
-    }
-    count += clientNumberWithGivenBalance( clientHead -> left , Balance );
-    if( clientHead -> client.acountBalance > Balance ) {
-        count++;
-    }
-    count += clientNumberWithGivenBalance( clientHead -> right , Balance );
-    return count;
-}
-
-/*recursive method to find number of appearance of client with account balance that lower then given loan balance*/
-int clientNumberWithBiggerLoansThenBalance( Client_tree *clientHead ) {
-    int count = 0 ;
-    if(!clientHead) {
-        return 0;
-    }
-    count += clientNumberWithBiggerLoansThenBalance( clientHead -> left );
-    if(clientHead -> client.loanBalance > clientHead->client.acountBalance) {
-        count++;
-    }
-    count += clientNumberWithBiggerLoansThenBalance( clientHead -> right );
-    return count;
-
-}
-
