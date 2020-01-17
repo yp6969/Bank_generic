@@ -85,8 +85,14 @@ void bankMenegerOption(){
                 printf("The avereg is : %g \n" , averageNumberOfAccountsInBranches(branchHead , &cnt_client ));
                 continue;
             case 5:
-                findClient(list);
-                continue;
+            if(bank.numberOfBranch == 0 ){
+                    printf("\nThere is no branches yet\nPlease creat one in the bank\n\n" );
+                    continue;
+                }
+                else{
+                    findClient(list);
+                    continue;
+                }
             case 6:
                 if(bank.numberOfBranch == 0 ){
                     printf("\nThere is no branches yet\nPlease creat one in the bank\n\n" );

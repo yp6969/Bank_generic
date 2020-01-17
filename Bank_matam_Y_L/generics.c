@@ -1,12 +1,13 @@
 #include "generics.h"
 
+
+
+/***********************************************************************************/
+/*****                           ADD FUNCTIONS                              *****/
+
 /* create new tree*/
 void create_tree( Tree* head ){
     head = NULL;
-}
-
-void* add_new_node(){
-    
 }
 
 /*  adding node */
@@ -29,12 +30,10 @@ Tree * add_new_node( Tree* head ,  void* key , int (*cmp)(void* , void*)) {
     }
     return head;
 }
-///////////////////////////////
-/////////////////////////////
-////////////////////////////
-/////////////////////////
 
-/*******************************************************/
+/***********************************************************************************/
+/*****                           DELETE FUNCTION                              *****/
+
 /* deleting all the wanted nodes in the bank/branch  */
 Tree* remove_All_nodes(Tree* node , void (*free_t)(Tree*) ){
     Tree* temp;
@@ -46,12 +45,12 @@ Tree* remove_All_nodes(Tree* node , void (*free_t)(Tree*) ){
 }
 
 
-/* delete spesific element in the tree */
-Tree* delete_node_tree(Tree* t , void* element , int (*cmp)(void* , void*) , void (*free_t)(Tree*)){
+/* delete spesific key in the tree */
+Tree* delete_node_tree(Tree* t , void* key , int (*cmp)(void* , void*) , void (*free_t)(Tree*)){
     Tree *node , *node_2 , *parent;
     void* tempNode;
     parent = NULL;
-    node = find_delete_node( t , element , &parent , cmp );/* searching */
+    node = find_delete_node( t , key , &parent , cmp );/* searching */
     if(!node){
         printf("Branch not found\n");
         return t;
@@ -72,12 +71,12 @@ Tree* delete_node_tree(Tree* t , void* element , int (*cmp)(void* , void*) , voi
         if(node->left){
             node_2 = find_max(node->left);
             SWAP(node->key , node_2->key , tempNode);
-            node->left = delete_node_tree(node->left , element , cmp);
+            node->left = delete_node_tree(node->left , key , cmp);
         }
         else{
             node_2 = find_min(node->right);
             SWAP(node->key , node_2->key , tempNode );
-            node->right = delete_node_tree(node->right , element , cmp );
+            node->right = delete_node_tree(node->right , key , cmp );
         }
     }
     return t;
@@ -118,13 +117,124 @@ Tree* find_min(Tree* node){
 
 
 
+
+/***********************************************************************************/
+/*****                           FIND FUNCTION                              *****/
+
+
+/* find client in the bank By any value*/
+void find_Client_In_Bank_By_Any(D_Llinked_List* list ,Tree* branchHead ,  void* key , int(*cmp)(void* , void*) , int (*cmp_id)(void* , void*) ){
+    if(!branchHead) return;
+    find_Client_In_Bank_By_Any(list , branchHead->left , key , cmp , cmp_id);
+    find_node_key(list , branchHead->branch->clientHead , key , cmp , cmp_id);
+    find_Client_In_Bank_By_Any(list , branchHead->right , key , cmp , cmp_id);
+}
+
+
+/* find element By any value and insert to linked list*/
+/* not sorted key */
+void find_node_key(D_Llinked_List* list , Tree* head , void* key , int(*cmp)(void* , void*) , int (*cmp_id)(void* , void*)){
+    if(!head) return;
+    find_node_key(list , head->left , key , cmp);
+    if((*cmp)(head->key , key ) == 0 )
+        add_Node_to_list(list , head->key , cmp_id );
+    find_node_key(list , head->right , key , cmp);
+}
+
+
+
+/* find element By int number */
+/* sorted  */
+void* sorted_find( Tree* head , void* key , int (*cmp)( void* , void* ))
+{
+    void* temp;
+    if( !head) return NULL;
+    if((*cmp)(head->key , key ) == 1){
+        temp = sorted_find(head->left , id , cmp );
+    }
+    else if((*cmp)(head->key , key ) == -1){
+        temp = sorted_find(head->right , key , cmp );
+    }
+    else return head->key;
+    
+    return temp;
+}
+
 ///////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
 
-void tree_to_array( Tree array[] , Tree* treeHead ){
+void tree_to_array(D_Llinked_List* list , Tree* treeHead , int (*cmp)(void* , void*) ){
     if(!treeHead) return;
-    tree_to_array( array , treeHead->left );
-    array[i] = treeHead;
-    tree_to_array( array , treeHead->right );
+    tree_to_array( list , treeHead->left );
+    add_Node_to_list( list , treeHead->key , cmp);
+    tree_to_array( list , treeHead->right );
+}
+
+
+///////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////
+
+/* adding new client to Linked list and sort by ID */
+void add_Node_to_list(D_Llinked_List* list , void* key , int (*cmp)(void*, void*)){
+    Node* node = ALLOC( Node , 1 );
+    Node* head = list->head;
+    node->key = key;
+
+    while((*cmp)(head->key , key ) <= 0 || !head->next  )
+    {
+        head = head->next;
+    }
+    if( (*cmp)(head->key , key ) == 1 )
+    {
+        node->prev = head->prev;
+        head->prev = node;
+        node->next = head;
+        if(!node->prev){
+            head->prev->next = node;
+            list->head = node;
+        }
+    }
+    else {
+        head->next = node;
+        node->prev = head;
+    }
+}
+
+
+/*              avarage              */
+double avarageKey(Node* t , int* numOfNodes , double (*getKey)(void*)){
+    
+    int num_l , num_r;
+    double avg_l , avg_r;
+    
+    if( !t ){
+        *numOfNodes = 0;
+        return 0;
+    }
+    
+    avg_l = avarageKey( t -> left , &num_l , getKey);
+    avg_r = avarageKey( t -> right , &num_r  , getKey);
+    
+    *numOfNodes = num_l + num_r + 1;
+    return ( (avg_l * num_l) + (avg_r * num_r) + getKey(t) ) / *numOfNodes;
+}
+
+
+
+/*avg num of client*/
+double avg_num_of_client(Tree* clientTree){
+    int num;
+    return avarageKey(clientTree , &num , &get_num_of_client);
+}
+
+
+
+/*prunt all the branchs ID */
+void printBranchsId(Tree* branchHead){
+    if(!branchHead) return ;
+    printBranchsId(branchHead->left);
+    printf("Branch [%d]\n" , branchHead->branch.branchId);
+    printBranchsId(branchHead->right);
 }
