@@ -73,16 +73,16 @@ void bankMenegerOption(){
         getchar();
         switch(option){
             case 1:
-                printBankParameters();
+                print_Bank_Parameters();
                 continue;
             case 2:
-                addNewBranch_t();
+                add_New_Branch_t();
                 continue;
             case 3:
-                printf("client number is: %d\n" , clientNuberOfBank());
+                printf("client number is: %d\n" , client_in_bank());
                 continue;
             case 4:
-                printf("The avereg is : %g \n" , averageNumberOfAccountsInBranches(branchHead , &cnt_client ));
+                printf("The avereg is : %g \n" , average_Number_Of_Accounts_In_Branches( bank.branchHead ));
                 continue;
             case 5:
             if(bank.numberOfBranch == 0 ){
@@ -90,7 +90,7 @@ void bankMenegerOption(){
                     continue;
                 }
                 else{
-                    findClient(list);
+                    find_Client(list);
                     continue;
                 }
             case 6:
@@ -99,7 +99,7 @@ void bankMenegerOption(){
                     continue;
                 }
                 else{
-                    branchHead = deleteAllBranchs( branchHead );
+                    bank.branchHead = delete_All_Branchs( bank.branchHead );
                     continue;
                 }
             case 7:
@@ -109,8 +109,8 @@ void bankMenegerOption(){
                 }
                 else{
                     printf("Choose one of the following\n");
-                    printBranchsId(branchHead);
-                    branchHead = deleteBranch( branchHead , getBranchId() );///////////
+                    print_all_Client_Id(bank.branchHead);
+                    bank.branchHead = delete_Branch( bank.branchHead , getBranchId() );///////////
                     continue;
                 }
             case 8:
@@ -130,8 +130,8 @@ void branchMenegerOption(){
     do{
         if(flag) printf(" Wrong branch ID rty again ");
         printf("Choose one of the next branches\n");
-        printBranchsId(branchHead);
-        branch = searchBranchById( branchHead , getBranchId() );
+        print_all_Branch_Id(bank.branchHead);
+        branch = search_Branch_By_Id( bank.branchHead , getBranchId() );
         flag = 1;
     }while(!branch);
     printf("Hello Branch meneger number %d!! \nwhat are you willing to do?\n\n" , branch->branchId);
@@ -150,22 +150,22 @@ void branchMenegerOption(){
         getchar();
         switch(option){
             case 1:
-                printBranchDetails(branch);
+                print_Branch_Details(branch);
                 continue;
             case 2:
-                addClientToBranch_t(branch);
+                add_Client_To_Branch_t(branch);
                 continue;
             case 3:
                 tmpAccountBalance = getAcountBalance();
                 printf("The number of clients with the wanted balance is : ");
-                printf(" %d \n", clientNumberWithGivenBalance(branch->clientHead , tmpAccountBalance ));
+                printf(" %d \n", client_Number_With_Given_Balance(branch->clientHead , tmpAccountBalance , &get_balance ));
                 continue;
             case 4:
                 printf("The number of clients with the wanted balance is : ");
-                printf(" %d \n", clientNumberWithBiggerLoansThenBalance(branch->clientHead));
+                printf(" %d \n", client_Number_With_Bigger_Loans_Then_Balance(branch->clientHead , &cmp_balance_loan ));
                 continue;
             case 5:
-                printClientAcountNumberAndBalance(branch->clientHead);
+                print_all_Client_Acount_Number_And_Balance(branch->clientHead);
                 continue;
             case 6:
                 if(branch->numberOfBranchClients == 0 ){
@@ -173,7 +173,7 @@ void branchMenegerOption(){
                     continue;
                 }
                 else{
-                    branch->clientHead = deleteAllBranchClients(branch->clientHead);
+                    branch->clientHead = delete_All_Branch_Clients(branch->clientHead);
                     continue;
                 }
             case 7:
@@ -183,8 +183,8 @@ void branchMenegerOption(){
                 }
                 else{
                     printf("Choose one of the following\n");
-                    printClientId(branch->clientHead);
-                    branch->clientHead = deleteClient(branch->clientHead , getClientId() );
+                    print_all_Client_Id(branch->clientHead);
+                    branch->clientHead = delete_Client(branch->clientHead , getClientId() );
                     continue;
                 }
             case 8:
@@ -206,13 +206,13 @@ void clientOption(){
         if(flag) printf(" Wrong branch or client ID try again ");
         flag = 1;
         printf("Choose one of the next branches\n");
-        printBranchsId(branchHead);
-        branch = searchBranchById( branchHead , getBranchId() );
+        print_all_Branch_Id(bank.branchHead);
+        branch = search_Branch_By_Id( bank.branchHead , getBranchId() );
         if(!branch) continue;
         printf("Choose one of the next client\n");
-        printClientId(branch->clientHead);
-        client = searchClientById( branch->clientHead , getClientId() );
-        if(!branch) continue;
+        print_all_Client_Id(branch->clientHead);
+        client = search_Client_By_Id_in_branch( branch->clientHead , getClientId() );
+        if(!client) continue;
         break;
     }
     /*  chose youre option */
@@ -230,7 +230,7 @@ void clientOption(){
         getchar();
         switch(option){
             case 1:
-                printClientDetails(client);
+                print_Client_Details(client);
                  
                 continue;
             case 2:
