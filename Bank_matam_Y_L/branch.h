@@ -7,34 +7,38 @@
 /***************************************/
 /*  functions that handle the tree data*/
 
-void create_Branch_Tree(Tree* branchHead);
+void create_Branch_Tree();
 void add_New_Branch_t();
 Branch* create_New_Branch();
-int is_Branch_Empty(Client_tree* clientHead);
-int is_Branch_Full(int numberOfBranchClients);
+int is_Bank_Empty();
+int is_Bank_Full();
 
 
 /************************************/
 /*          delete branch          */
 Tree* delete_All_Branchs(Tree* branchTree);
-Tree* delete_Branch(Tree* branchTree , Branch* branch);
-void free_Branch(Branch_tree *branchTree);
+Tree* delete_Branch(Tree* branchTree , int branchId);
+void free_Branch(void *branch);
 
 
 /************************************/
-/*          search and compare          */
-Branch* search_Branch_By_Id( Tree* branchHead );
-int cmp_branchs_id(Branch* b1 , Branch* b2);
+/*             compare              */
+double client_in_Branch(void* b);
+
 
 /*******************************************/
 /* function's is manage all branch changes*/
-void updateBranchParameters(Branch* branch);/*general*/
+void update_Branch_Parameters(Branch* branch);/*general*/
 double calculateBranchProfitOfLastYear(Branch* branch);
-int clientNumberWithGivenBalance(Tree *clientHead , double Balance);
-int clientNumberWithBiggerLoansThenBalance(Tree *clientHead);
+
+
+int client_Number_With_Given_Balance(Tree *clientHead , double Balance , double (*get_balance)(void*));
+int client_Number_With_Bigger_Loans_Then_Balance(Tree *clientHead , int (*cmp_balance_loan)(void*));
+
+/* print branch deatails */
 void print_all_Branch_Details(Tree* branchTree);
-void print_all_Client_Id(Tree* branchTree);
-void print_Branch_Details(Branch* branch);
-void print_Branch_Id(Branch* b);
+void print_all_Branch_Id(Tree* branchTree);
+void print_Branch_Details(void* branch);
+void print_Branch_Id(void* b);
 
 #endif

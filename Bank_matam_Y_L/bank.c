@@ -2,8 +2,8 @@
 
 /*creating the branch list with the maximum optional size*/
 void inituilize_Bank(){
-    createBranchTree();
-    updateBankParameters();
+    create_Branch_Tree();
+    update_Bank_Parameters();
 }
 
 
@@ -18,18 +18,10 @@ void update_Bank_Parameters(){
     return;
 }
 
-
-
-/* quest if the list is empty*/
-int is_Bank_Empty(){
-    if(!bank.branchHead) return TRUE;
-    return FALSE;
-}
-
-/* quest if the branch list is full*/
-int is_Bank_Full(){
-    if(bank.numberOfBranch >= MAX_BRANCHS) return TRUE;
-    return FALSE;
+/* return the number of clients of bank  */
+int client_in_bank()
+{
+ return bank.numberOfBankClients;
 }
 
 
@@ -38,9 +30,10 @@ int is_Bank_Full(){
 
 /*avg num of client*/
 /* return the averge of number of clients in branch */
-double average_Number_Of_Accounts_In_Branches(Tree* branchTree){
+double average_Number_Of_Accounts_In_Branches(Tree* branchTree)
+{
     int num;
-    return avarage_Key(branchTree , &num , &get_num_of_client);
+    return avarage_Key(branchTree , &num , &client_in_Branch);
 }
 
 
@@ -48,7 +41,8 @@ double average_Number_Of_Accounts_In_Branches(Tree* branchTree){
 /*******                      print bank                     ********/
 
 
-void print_Bank_Parameters(){
+void print_Bank_Parameters()
+{
     printf("\nname Of Bank: %s \n", bank.nameOfBank );
     printf("Number of branches: %d \n" , bank.numberOfBranch );
     printf("Number of bank client: %d \n" , bank.numberOfBankClients);
@@ -59,7 +53,8 @@ void print_Bank_Parameters(){
 }
 
 
-void calculate_Profit_Of_Last_Year(){
+void calculate_Profit_Of_Last_Year()
+{
     updateBankProfitOfLastYear( &(bank.profitOfLastYear) , NON , NON);
     return;
 }

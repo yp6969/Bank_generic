@@ -29,10 +29,24 @@ void add_Client_To_Branch_t(Branch* branch)
         printf("The branch is full!!!!!\n\n");
         return;
     }
-    Client* tempClient  = create_new_client(branch->branchId);
+    Client* tempClient  = create_New_Client(branch->branchId);
     branch-> clientHead = add_new_node(branch->clientHead , tempClient , &cmp_clients_id );
-    updateNewClientToBranch( branch  , *tempClient );
-    printf("\nBranch number %d is created\n\n", tmpBranch->branchId);
+    update_New_Client_To_Branch( branch  , tempClient );
+    printf("\nclient number %d is created\n\n", tempClient->accountNumber);
+}
+
+/* check is the client list is empty*/
+int is_Branch_Empty( Tree* clientHead )
+{
+    if(!clientHead) return TRUE;
+    return FALSE;
+}
+
+/* check is the client list is full*/
+int is_Branch_Full(int numberOfBranchClients)
+{
+    if(numberOfBranchClients >= MAX_CLIENT_OF_BRANCH) return TRUE;
+    return FALSE;
 }
 
 
@@ -41,7 +55,7 @@ void add_Client_To_Branch_t(Branch* branch)
 
 
 /* handle the finding options */
-void findClient(D_Llinked_List* list ){
+void find_Client(D_Llinked_List* list ){
     int option;
     Client* client;
     printf("\nHow do you want to find\n");
@@ -52,10 +66,14 @@ void findClient(D_Llinked_List* list ){
     switch (option)
     {
     case 1:
-        client = search_Client_By_Id_In_Bank( bank.branchHead );
+        client = search_Client_By_Id_In_Bank( bank.branchHead , getClientId() , &get_client_head);
+        if(!client) printf("client not found\n");
+        else printf("succses\n");
         break;
     case 2:
-        find_Client_In_Bank_By_Acount_Balance( list , bank.branchHead );
+        find_Client_In_Bank_By_Acount_Balance( list , bank.branchHead , getAcountBalance());
+        if(!list) printf("clients not found\n");
+        else printf("succses\n");
         break;
     case 3:
         return;
@@ -65,39 +83,53 @@ void findClient(D_Llinked_List* list ){
     }
 }
 
-
 /* searching client by ID in the Bank !!!! */
-Client* search_Client_By_Id_In_Bank(Tree* branchHead ){
+Client* search_Client_By_Id_In_Bank(Tree* branchHead , int clientId , Tree* (*get_tree)(void*))
+{
     Client* client;
     if(!branchHead) return NULL;
-    client = search_Client_By_Id_In_Bank( branchHead->left ;
+    client = search_Client_By_Id_In_Bank( branchHead->left , clientId , get_tree);
     if(client) return client;
-    client = search_Client_By_Id_in_branch(branchHead->branch->clientHead );
+    client = search_Client_By_Id_in_branch( (*get_tree)(branchHead->key) , clientId);
     if(client) return client;
-    client = search_Client_By_Id_In_Bank(branchHead->right );
+    client = search_Client_By_Id_In_Bank(branchHead->right , clientId , get_tree);
     return client;
- }
+}
 
 
 /* searching client by ID in spesific branch */
-Client* search_Client_By_Id_in_branch( Tree* clientHead )
+Client* search_Client_By_Id_in_branch( Tree* clientHead , int clientId )
 {
     Client* tmp = ALLOC(Client , 1);
-    tmp->clientId = getClientId();
+    tmp->clientId = clientId;
     Client* client = (Client*)sorted_find(clientHead , tmp , &cmp_clients_id );
     FREE(tmp);
     return client;
 }
 
 /* find Client In the bank By Acount Balance and insert to linked list*/
-void find_Client_In_Bank_By_Acount_Balance(D_Llinked_List* list ,Tree* branchHead )
+void find_Client_In_Bank_By_Acount_Balance(D_Llinked_List* list ,Tree* branchHead , double acountBalance )
 {
     Client* tmp = ALLOC(Client , 1);
-    tmp->acountBalance = getAcountBalance();
-    find_Client_In_Bank_By_Any(list , branchHead , tmp , &cmp_clients_accountBalance , &cmp_clients_id);
+    tmp->acountBalance = acountBalance;
+    find_Client_In_Bank_By_Any(list , branchHead , tmp , &cmp_clients_accountBalance , &cmp_clients_id , &get_client_head);
     FREE(tmp);
     return ;
 }
+
+
+/****************************************************************/
+/*                         search branch                        */
+
+Branch* search_Branch_By_Id( Tree* branchHead , int branchId)
+{
+    Branch* tmp = ALLOC(Branch , 1);
+    tmp->branchId = branchId;
+    Branch* branch = (Branch*)sorted_find(branchHead , tmp , &cmp_branchs_id );
+    FREE(tmp);
+    return branch;
+}
+
 
 /********************************************************/
 /******              delete clients                ******/
@@ -109,19 +141,21 @@ Tree* delete_All_Branch_Clients(Tree* clientHead  )
 }
 
 /* delete specific client */
-Tree* delete_Client( Tree* clientHead , Client* client )
+Tree* delete_Client( Tree* clientHead , int clientId )
 {
-    return delete_node_tree( clientHead , client , &cmp_clients_id , &free_Client);
+    Client* tmp = ALLOC(Client , 1);
+    tmp->clientId = clientId;
+    return delete_node_tree( clientHead , tmp , &cmp_clients_id , &free_Client);
+    FREE(tmp);
 }
 
 /* free all the allocated blockes in the client*/
-void free_Client(Tree* clientNode)
+void free_Client(void* client)
 {
-    update_Delete_Client(clientNode->client);
-    FREE(clientNode->client->nameOfBank);
-    FREE(clientNode->client->firstNameOfClient);
-    FREE(clientNode->client->lastNameOfClient);
-    FREE(clientNode);
+    update_Delete_Client((Client*)client);
+    FREE(((Client*)client)->nameOfBank);
+    FREE(((Client*)client)->firstNameOfClient);
+    FREE(((Client*)client)->lastNameOfClient);
     return;
 }
 
@@ -129,19 +163,44 @@ void free_Client(Tree* clientNode)
 ////////////////////////////////////////////////////////////////
 
 /* compare client by id */
-int cmp_clients_id(Client* c1 , Client* c2)
+int cmp_clients_id(void* c1 , void* c2)
 {
-    if(c1->clientId > c2->clientId) return 1;
-    if(c1->clientId < c2->clientId) return -1;
+    if(((Client*)c1)->clientId > ((Client*)c2)->clientId) return 1;
+    if(((Client*)c1)->clientId < ((Client*)c2)->clientId) return -1;
     return 0;
 }
 
 /* compare client by id */
-int cmp_clients_accountBalance(Client* c1 , Client* c2 )
+int cmp_clients_accountBalance(void* c1 , void* c2 )
 {
-    if(c1->accountBalance > c2->accountBalance ) return 1;
-    if(c1->accountBalance < c2->accountBalance ) return -1;
+    if(((Client*)c1)->acountBalance > ((Client*)c2)->acountBalance ) return 1;
+    if(((Client*)c1)->acountBalance < ((Client*)c2)->acountBalance ) return -1;
     return 0;
+}
+
+int cmp_balance_loan(void* client)
+{
+    if(((Client*)client)->acountBalance > ((Client*)client)->loanBalance) return 1;
+    if(((Client*)client)->acountBalance < ((Client*)client)->loanBalance) return -1;
+    return 0;
+}
+
+int cmp_branchs_id(void* b1 , void* b2)
+{
+    if(((Branch*)b1)->branchId > ((Branch*)b2)->branchId) return 1;
+    if(((Branch*)b1)->branchId < ((Branch*)b2)->branchId) return -1;
+    return 0;
+}
+
+double get_balance(void* client)
+{
+    return ((Client*)client)->acountBalance;
+}
+
+/* get the client tree head of branch */
+Tree* get_client_head(void* branch)
+{
+    return ((Branch*)branch)->clientHead;
 }
 
 /**********************************************************************************/
@@ -166,7 +225,7 @@ void updateClientParameters(Client** client , int banchId)
 
 void update_Delete_Client(Client* client )
 {
-    Branch* branch = searchBranchById(bank.branchHead , client->branchId );
+    Branch* branch = search_Branch_By_Id(bank.branchHead , client->branchId );
     /* bank updates */
     updateNumberOfBankClients( &bank.numberOfBankClients , DELETE , NON );
     updateSumOfAllBankClients(&bank.sumOfAllBankClients , -(client->acountBalance - client->loanBalance) , NON );
@@ -278,24 +337,24 @@ void print_all_Client_Acount_Number_And_Balance(Tree* clientTree){
 /*           print client pointers            */
 
 /*Print the parameters of the client*/
-void print_Client_Details(Client* client){
-    printf("\nname Of Client: %s %s\n", client -> firstNameOfClient , client -> lastNameOfClient );
-    printf("client Id: %d \n" ,(int)client -> clientId );
-    printf("branch Id: %d \n" , client -> branchId);
-    printf("account Number: %d\n " , client -> accountNumber);
-    printf("authorized Exception: %g \n" , client -> authorizedException);
-    printf("acount Balance: %g \n" , client -> acountBalance);
-    printf("loan Balance: %g \n" , client -> loanBalance);
-    printf("save Blance: %g \n" , client -> saveBlance);
+void print_Client_Details(void* client){
+    printf("\nname Of Client: %s %s\n", ((Client*)client) -> firstNameOfClient , ((Client*)client) -> lastNameOfClient );
+    printf("client Id: %d \n" ,(int)((Client*)client) -> clientId );
+    printf("branch Id: %d \n" , ((Client*)client) -> branchId);
+    printf("account Number: %d\n " , ((Client*)client)-> accountNumber);
+    printf("authorized Exception: %g \n" , ((Client*)client) -> authorizedException);
+    printf("acount Balance: %g \n" , ((Client*)client) -> acountBalance);
+    printf("loan Balance: %g \n" , ((Client*)client) -> loanBalance);
+    printf("save Blance: %g \n" , ((Client*)client) -> saveBlance);
     return;
 }
 
-void print_Client_Id(Client* c ){
-    printf("Client [%d]\n" , c->clientId);
+void print_Client_Id(void* c ){
+    printf("Client [%d]\n" , ((Client*)c)->clientId);
 }
 
 
-void print_Client_account_number_balance(Client* c ){
-    printf("\nClient account: %d \t Balance: %g \n", client->accountNumber , client->acountBalance );
+void print_Client_account_number_balance(void* c ){
+    printf("\nClient account: %d \t Balance: %g \n", ((Client*)c)->accountNumber , ((Client*)c)->acountBalance );
     
 }
