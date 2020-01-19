@@ -15,7 +15,7 @@ void create_Branch_Client_Tree(Tree* clientHead)
 Client* create_New_Client( int branchId )
 {
     Client* newClient = ALLOC (Client , 1 );
-    //newClient->acountBalance = 0;
+    /*newClient->acountBalance = 0;*/
     updateClientParameters( &newClient , branchId );
     return newClient;
 }
@@ -23,13 +23,14 @@ Client* create_New_Client( int branchId )
 /* add the client to the sorted tree*/
 void add_Client_To_Branch_t(Branch* branch)
 {
+    Client* tempClient  = create_New_Client(branch->branchId);
     /* if the branch is full do nothing*/
     if(is_Branch_Full(branch->numberOfBranchClients))
     {
         printf("The branch is full!!!!!\n\n");
         return;
     }
-    Client* tempClient  = create_New_Client(branch->branchId);
+
     branch-> clientHead = add_new_node(branch->clientHead , tempClient , &cmp_clients_id );
     update_New_Client_To_Branch( branch  , tempClient );
     printf("\nclient number %d is created\n\n", tempClient->accountNumber);
@@ -100,9 +101,10 @@ Client* search_Client_By_Id_In_Bank(Tree* branchHead , int clientId , Tree* (*ge
 /* searching client by ID in spesific branch */
 Client* search_Client_By_Id_in_branch( Tree* clientHead , int clientId )
 {
+    Client* client;
     Client* tmp = ALLOC(Client , 1);
     tmp->clientId = clientId;
-    Client* client = (Client*)sorted_find(clientHead , tmp , &cmp_clients_id );
+    client = (Client*)sorted_find(clientHead , tmp , &cmp_clients_id );
     FREE(tmp);
     return client;
 }
@@ -123,9 +125,10 @@ void find_Client_In_Bank_By_Acount_Balance(D_Llinked_List* list ,Tree* branchHea
 
 Branch* search_Branch_By_Id( Tree* branchHead , int branchId)
 {
+    Branch* branch;
     Branch* tmp = ALLOC(Branch , 1);
     tmp->branchId = branchId;
-    Branch* branch = (Branch*)sorted_find(branchHead , tmp , &cmp_branchs_id );
+    branch = (Branch*)sorted_find(branchHead , tmp , &cmp_branchs_id );
     FREE(tmp);
     return branch;
 }
@@ -159,8 +162,8 @@ void free_Client(void* client)
     return;
 }
 
-////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////////*/
+/*//////////////////////////////////////////////////////////////*/
 
 /* compare client by id */
 int cmp_clients_id(void* c1 , void* c2)
