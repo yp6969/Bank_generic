@@ -14,13 +14,14 @@ void create_Branch_Tree()
 /*adding new branch to the branch tree*/
 void add_New_Branch_t()
 {
+    Branch *tmpBranch = create_New_Branch();
     /* if the branch is full do nothing*/
     if(is_Bank_Full())
     {
         printf("The branch is full!!!!!\n\n");
         return;
     }
-    Branch *tmpBranch = create_New_Branch();
+    
     bank.branchHead = add_new_node( bank.branchHead , tmpBranch , &cmp_branchs_id );
     updateNumberOfBranch( &(bank.numberOfBranch) , ADD , NON );
     printf("\nBranch number %d is created\n\n", tmpBranch->branchId);
