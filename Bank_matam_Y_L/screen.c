@@ -110,7 +110,7 @@ void bankMenegerOption(){
                 else{
                     printf("Choose one of the following\n");
                     print_all_Client_Id(bank.branchHead);
-                    bank.branchHead = delete_Branch( bank.branchHead , getBranchId() );///////////
+                    bank.branchHead = delete_Branch( bank.branchHead , getBranchId() );
                     continue;
                 }
             case 8:
